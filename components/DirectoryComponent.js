@@ -37,6 +37,8 @@ class Directory extends Component {
         };
     
         return (
+            //flat list uses lazy loading
+            //lazy loading: only a part of a list is rendered at a time, the parts that have scrolled far off screen are removed from memory
             <FlatList
                 data={this.state.campsites}
                 renderItem={renderDirectoryItem}
