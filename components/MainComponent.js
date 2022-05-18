@@ -12,6 +12,16 @@ import { createAppContainer } from 'react-navigation';
 import ExpoStatusBar from 'expo-status-bar/build/ExpoStatusBar';
 import { Icon } from 'react-native-elements';
 import SafeAreaView from 'react-native-safe-area-view';
+import { connect } from 'react-redux';
+import { fetchCampsites, fetchComments, fetchPromotions, fetchPartners} from '../redux/ActionCreators';
+
+//allows us to access these action creators as props
+const mapDispatchToProps = {
+    fetchCampsites,
+    fetchComments,
+    fetchPromotions,
+    fetchPartners
+};
 
 //createStackNavigator is a function, that has 1 required argument called "Route Config Object"
 // in this argument, we set what components will be available for this stack
@@ -222,6 +232,14 @@ const AppNavigator = createAppContainer(MainNavigator);
 //Main component will act as the central hub that creates and holds all of the navigators
 // (AppNavigator is a container for the DirectoryNavigator which contains the screens for both directory and campsiteinfo)
 class Main extends Component {
+
+    componentDidMount() {
+        this.props.fetchCampsites();
+        this.props.fetchComments();
+        this.props.fetchPromotions();
+        this.props.fetchPartners();
+    }
+
     render() {
         return (
             <View 
@@ -270,4 +288,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Main;
+export default connect(null, mapDispatchToProps)(Main);

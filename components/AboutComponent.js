@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import { ScrollView, FlatList, Text } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
-import { PARTNERS } from '../shared/partners';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+//receives the state as a prop and returns the partners data from the state
+const mapStateToProps = state => {
+    return {
+        partners: state.partners
+    };
+};
 
 function Mission() {
     return(
@@ -16,12 +24,6 @@ function Mission() {
 }
 
 class About extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            partners: PARTNERS
-        };
-    }
 
     static navigationOptions = {
         title: 'About Us'
@@ -33,7 +35,7 @@ class About extends Component {
                 <ListItem
                     title={item.name}
                     subtitle={item.description}
-                    leftAvatar={{ source: require('./images/bootstrap-logo.png')}} />
+                    leftAvatar={{ source: {uri: baseUrl + item.image}}} />
             )
         };
 
@@ -43,7 +45,9 @@ class About extends Component {
                 <Card
                     title="Community Partners">
                     <FlatList 
-                        data={this.state.partners}
+                    //first partners refers to the entire part of the state that handles the partners data, including the is loading and error message properties, along with the partners array
+                    //second partners refers to the partner's data's array
+                        data={this.props.partners.partners}
                         renderItem={renderPartner}
                         keyExtractor={item => item.id.toString()}
                     />
@@ -53,4 +57,5 @@ class About extends Component {
     }
 }
 
-export default About;
+//this makes sure that the about component now receives the partners props from the redux store
+export default connect(mapStateToProps)(About);

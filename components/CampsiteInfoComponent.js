@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { CAMPSITES } from '../shared/campsites';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+//receives the state as a prop and returns the partners data from the state
+const mapStateToProps = state => {
+    return {
+        campsites: state.campsites,
+        comments: state.comments
+    };
+};
 
 
 //'props' will pass the entire props object since multiple are being used in this component
@@ -15,7 +23,7 @@ function RenderCampsite(props) {
         return (
             <Card
                 featuredTitle={campsite.name}
-                image={require('./images/react-lake.jpg')}>
+                image={{uri: baseUrl + campsite.image}}>
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>
@@ -62,8 +70,6 @@ class CampsiteInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            campsites: CAMPSITES,
-            comments: COMMENTS,
             favorite: false
         };
     }
@@ -78,9 +84,9 @@ class CampsiteInfo extends Component {
 
     render() {
         const campsiteId = this.props.navigation.getParam('campsiteId');
-        const campsite = this.state.campsites.filter(campsite => campsite.id === campsiteId)[0];
+        const campsite = this.props.campsites.campsites.filter(campsite => campsite.id === campsiteId)[0];
         //filters out comments for the particular campsite that we want to render using the campsiteId, into a new array which will be passed into RenderComments as a prop
-        const comments = this.state.comments.filter(comment => comment.campsiteId === campsiteId);
+        const comments = this.props.comments.comments.filter(comment => comment.campsiteId === campsiteId);
         return (
             <ScrollView>
                 <RenderCampsite campsite={campsite} 
@@ -93,4 +99,4 @@ class CampsiteInfo extends Component {
     }
 }
 
-export default CampsiteInfo;
+export default connect(mapStateToProps)(CampsiteInfo);
