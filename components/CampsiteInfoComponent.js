@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
-import { Card } from 'react-native-elements';
+import { Text, View, ScrollView, FlatList } from 'react-native';
+import { Card, Icon } from 'react-native-elements';
 import { CAMPSITES } from '../shared/campsites';
+import { COMMENTS } from '../shared/comments';
 
-function RenderCampsite({campsite}) {
+
+//'props' will pass the entire props object since multiple are being used in this component
+function RenderCampsite(props) {
+
+    //descructure campsite object
+     const {campsite} = props;
+
     if (campsite) {
         return (
             <Card
@@ -12,18 +19,57 @@ function RenderCampsite({campsite}) {
                 <Text style={{margin:10}}>
                     {campsite.description}
                 </Text>
+                <Icon 
+                    name={props.favorite ? 'heart' : 'heart-o'}
+                    type='font-awesome'
+                    color='#f50'
+                    raised //subtle shadow effect
+                    reverse //reverse the color scheme
+                    //cant mark it as a favorite more than once using tirenary operator
+                    onPress={() => props.favorite ? 
+                        console.log('Already set as a favorite') : props.markFavorite()}
+                />
             </Card>
         );
     }
     return <View />;
 }
 
+function RenderComments({comments}) {
+    //takes each comments in the array 'comments' and rendered it into it's final form
+    const renderCommentItem = ({item}) => {
+        return(
+            <View style={{margin: 10}}>
+                <Text style={{fontSize: 14}}>{item.text}</Text>
+                <Text style={{fontSize: 12}}>{item.rating} Stars</Text>
+                <Text style={{fontSize: 12}}>{`-- ${item.author}, ${item.date}`}</Text>
+            </View>
+        );
+    };
+
+    return(
+        <Card title='Comments'>
+            <FlatList
+                data={comments}
+                renderItem={renderCommentItem}
+                keyExtractor={item => item.id.toString()}
+            />
+        </Card>
+    );
+}
+
 class CampsiteInfo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            campsites: CAMPSITES
+            campsites: CAMPSITES,
+            comments: COMMENTS,
+            favorite: false
         };
+    }
+
+    markFavorite() {
+        this.setState({favorite: true});
     }
 
     static navigationOptions = {
@@ -31,9 +77,19 @@ class CampsiteInfo extends Component {
     }
 
     render() {
-            const campsiteId = this.props.navigation.getParam('campsiteId');
-            const campsite = this.state.campsites.filter(campsite => campsite.id === campsiteId)[0];
-            return <RenderCampsite campsite={campsite} />;
+        const campsiteId = this.props.navigation.getParam('campsiteId');
+        const campsite = this.state.campsites.filter(campsite => campsite.id === campsiteId)[0];
+        //filters out comments for the particular campsite that we want to render using the campsiteId, into a new array which will be passed into RenderComments as a prop
+        const comments = this.state.comments.filter(comment => comment.campsiteId === campsiteId);
+        return (
+            <ScrollView>
+                <RenderCampsite campsite={campsite} 
+                    favorite={this.state.favorite}
+                    markFavorite={() => this.markFavorite()}
+                />
+                <RenderComments comments={comments} />
+            </ScrollView>
+        );
     }
 }
 
