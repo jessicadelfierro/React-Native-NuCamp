@@ -5,7 +5,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 class Reservation extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             campers: 1, 
             hikeIn: false,
@@ -14,10 +13,12 @@ class Reservation extends Component {
         };
     }
 
+    //gives it a title of Reserve Campsite
     static navigationOptions = {
         title: 'Reserve Campsite'
     }
 
+    //event handle to handle form submition
     handleReservation() {
         console.log(JSON.stringify(this.state));
         this.setState({
@@ -37,6 +38,9 @@ class Reservation extends Component {
                         style={styles.formItem}
                         selectedValue={this.state.campers}
                         onValueChange={itemValue => this.setState({campers: itemValue})}
+                        //gets passed a callback function with an itemValue parameter, it will update the components state "campers" property with that itemValue
+                        //Picker.Item - label is what the user sees, value is what is passed to the onValueChange prop in Picker
+                        //selectedValue prop will also be updated to match the current state so the picker knows what item to display as being the current selection
                     >
                         <Picker.Item label='1' value='1' />
                         <Picker.Item label='2' value='2' />
@@ -51,7 +55,7 @@ class Reservation extends Component {
                     <Switch 
                         style={styles.formItem}
                         value={this.state.hikeIn}
-                        trackColor={{true: '#5637DD', false: null}}
+                        trackColor={{true: '#5637DD', false: null}} //gives color for if the switch value is true and false
                         onValueChange={value => this.setState({hikeIn: value})}
                     />
                 </View>
@@ -63,7 +67,7 @@ class Reservation extends Component {
                         }
                         title={this.state.date.toLocaleDateString('en-US')}
                         color='#5637DD'
-                        accessibilityLabel='Tap me to select a reservation date'
+                        accessibilityLabel='Tap me to select a reservation date' //helps with screen readers
                     />
                 </View>
                 {this.state.showCalendar && (
@@ -73,7 +77,7 @@ class Reservation extends Component {
                         display='default'
                         onChange={(event, selectedDate) => {
                             selectedDate && this.setState({date: selectedDate, showCalendar: false});
-                        }}
+                        }} //selected date is saved to the state
                         style={styles.formItem}
                     />
                 )}
