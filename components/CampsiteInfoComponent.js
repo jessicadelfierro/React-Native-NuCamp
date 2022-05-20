@@ -17,7 +17,7 @@ const mapStateToProps = state => {
 function RenderCampsite(props) {
 
     //descructure campsite object
-     const {campsite} = props;
+    const {campsite} = props;
 
     if (campsite) {
         return (

@@ -3,6 +3,7 @@ import { ScrollView, FlatList, Text } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent'; //doesn't need curly braces because it is a default export
 
 //receives the state as a prop and returns the partners data from the state
 const mapStateToProps = state => {
@@ -38,6 +39,31 @@ class About extends Component {
                     leftAvatar={{ source: {uri: baseUrl + item.image}}} />
             )
         };
+
+        //loading image
+        if (this.props.partners.isLoading) {
+            return(
+                <ScrollView>
+                    <Mission />
+                    <Card
+                        title="Community Partners">
+                            <Loading />
+                    </Card>
+                </ScrollView>
+            );
+        }
+        //error message if unable to load
+        if (this.props.partners.errMess) {
+            return(
+                <ScrollView>
+                    <Mission />
+                    <Card
+                        title="Community Partners">
+                            <Text>{this.props.partners.errMess}</Text>
+                    </Card>
+                </ScrollView>
+            );
+        }
 
         return (
             <ScrollView>

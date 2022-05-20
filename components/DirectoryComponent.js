@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { Tile } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
+
 
 //receives the state as a prop and returns the partners data from the state
 const mapStateToProps = state => {
@@ -38,6 +40,19 @@ class Directory extends Component {
             )
         };
     
+
+        if (this.props.campsites.isLoading) {
+            return <Loading />;
+        }
+
+        if (this.props.campsites.errMess) {
+            return (
+                <View>
+                    <Text>{props.campsites.errMess}</Text>
+                </View>
+            )
+        }
+
         return (
             //flat list uses lazy loading
             //lazy loading: only a part of a list is rendered at a time, the parts that have scrolled far off screen are removed from memory

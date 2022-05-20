@@ -3,6 +3,10 @@ import { View, Text, ScrollView } from 'react-native';
 import { Card } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import Loading from './LoadingComponent';
+
+//view: generic container component that supports layout with flexbox styles and more (like html div element)
+//text: generic container for displaying text
 
 //receives the state as a prop and returns the partners data from the state
 const mapStateToProps = state => {
@@ -13,10 +17,24 @@ const mapStateToProps = state => {
     };
 };
 
-//view: generic container component that supports layout with flexbox styles and more (like html div element)
-//text: generic container for displaying text
+function RenderItem(props) {
+    //destructure item property inside component
+    const {item} = props;
 
-function RenderItem({item}) {
+    if (props.isLoading) {
+        return <Loading />;
+    }
+
+    if (props.errMess) {
+        return (
+            <View>
+                <Text>
+                    {props.errMess}
+                </Text>
+            </View>
+        );
+    }
+
     if (item) {
         return (
             <Card
@@ -44,11 +62,20 @@ class Home extends Component {
             //loads all its children at once
             <ScrollView>
                 <RenderItem
-                    item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]} />
+                    item={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]}
+                    isLoading={this.props.campsites.isLoading} 
+                    errMess={this.props.campsites.errMess}
+                />
                 <RenderItem 
-                    item={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]} />
+                    item={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]} 
+                    isLoading={this.props.promotions.isLoading}
+                    errMess={this.props.promotions.errMess}
+                />
                 <RenderItem 
-                    item={this.props.partners.partners.filter(partner => partner.featured)[0]} />
+                    item={this.props.partners.partners.filter(partner => partner.featured)[0]} 
+                    isLoading={this.props.partners.isLoading}
+                    errMess={this.props.partners.errMess}
+                />
             </ScrollView>
         );
     }
