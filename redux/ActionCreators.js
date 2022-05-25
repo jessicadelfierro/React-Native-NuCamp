@@ -153,6 +153,12 @@ export const addFavorite = campsiteId => ({
     payload: campsiteId
 });
 
+//normal non-thunk action creator, creates an action object with the action type of delete_favorite and a payload of the campsiteId to be deleted
+export const deleteFavorite = campsiteId => ({
+    type: ActionTypes.DELETE_FAVORITE,
+    payload: campsiteId
+});
+
 //thunked action creator
 export const postComment = (campsiteId, rating, author, text) => dispatch => {
     const newComment = {
