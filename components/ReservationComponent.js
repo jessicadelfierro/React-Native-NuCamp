@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal } from 'react-native';
+import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Modal, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Animatable from 'react-native-animatable';
 
 class Reservation extends Component {
     constructor(props) {
@@ -10,7 +11,7 @@ class Reservation extends Component {
             hikeIn: false,
             date: new Date(),
             showCalendar: false,
-            showModal: false
+            // showModal: false
         };
     }
 
@@ -20,15 +21,15 @@ class Reservation extends Component {
     }
 
     //event handler to toggle modal (toggles opposite of this.state)
-    toggleModal() {
-        this.setState({showModal: !this.state.showModal});
-    }
+    // toggleModal() {
+    //     this.setState({showModal: !this.state.showModal});
+    // }
 
     //event handle to handle form submition
-    handleReservation() {
-        console.log(JSON.stringify(this.state));
-        this.toggleModal();
-    }
+    // handleReservation() {
+    //     console.log(JSON.stringify(this.state));
+    //     this.toggleModal();
+    // }
 
     //resets form
     resetForm() {
@@ -44,64 +45,89 @@ class Reservation extends Component {
     render() {
         return (
             <ScrollView>
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Number of Campers</Text>
-                    <Picker
-                        style={styles.formItem}
-                        selectedValue={this.state.campers}
-                        onValueChange={itemValue => this.setState({campers: itemValue})}
-                        //gets passed a callback function with an itemValue parameter, it will update the components state "campers" property with that itemValue
-                        //Picker.Item - label is what the user sees, value is what is passed to the onValueChange prop in Picker
-                        //selectedValue prop will also be updated to match the current state so the picker knows what item to display as being the current selection
-                    >
-                        <Picker.Item label='1' value='1' />
-                        <Picker.Item label='2' value='2' />
-                        <Picker.Item label='3' value='3' />
-                        <Picker.Item label='4' value='4' />
-                        <Picker.Item label='5' value='5' />
-                        <Picker.Item label='6' value='6' />
-                    </Picker>
-                </View>
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Hike-In?</Text>
-                    <Switch 
-                        style={styles.formItem}
-                        value={this.state.hikeIn}
-                        trackColor={{true: '#5637DD', false: null}} //gives color for if the switch value is true and false
-                        onValueChange={value => this.setState({hikeIn: value})}
-                    />
-                </View>
-                <View style={styles.formRow}>
-                    <Text style={styles.formLabel}>Date</Text>
-                    <Button 
-                        onPress={() =>
-                            this.setState({showCalendar: !this.state.showCalendar})
-                        }
-                        title={this.state.date.toLocaleDateString('en-US')}
-                        color='#5637DD'
-                        accessibilityLabel='Tap me to select a reservation date' //helps with screen readers
-                    />
-                </View>
-                {this.state.showCalendar && (
-                    <DateTimePicker 
-                        value={this.state.date}
-                        mode={'date'}
-                        display='default'
-                        onChange={(event, selectedDate) => {
-                            selectedDate && this.setState({date: selectedDate, showCalendar: false});
-                        }} //selected date is saved to the state
-                        style={styles.formItem}
-                    />
-                )}
-                <View style={styles.formRow}>
-                    <Button 
-                        onPress={() => this.handleReservation()}
-                        title='Search'
-                        color='#5637DD'
-                        accessibilityLabel='Tap me to search for available campsites to reserve'
-                    />
-                </View>
-                <Modal
+                <Animatable.View
+                    animation='zoomIn'
+                    duration={2000}
+                    delay={1000}
+                >
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Number of Campers</Text>
+                        <Picker
+                            style={styles.formItem}
+                            selectedValue={this.state.campers}
+                            onValueChange={itemValue => this.setState({campers: itemValue})}
+                            //gets passed a callback function with an itemValue parameter, it will update the components state "campers" property with that itemValue
+                            //Picker.Item - label is what the user sees, value is what is passed to the onValueChange prop in Picker
+                            //selectedValue prop will also be updated to match the current state so the picker knows what item to display as being the current selection
+                        >
+                            <Picker.Item label='1' value='1' />
+                            <Picker.Item label='2' value='2' />
+                            <Picker.Item label='3' value='3' />
+                            <Picker.Item label='4' value='4' />
+                            <Picker.Item label='5' value='5' />
+                            <Picker.Item label='6' value='6' />
+                        </Picker>
+                    </View>
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Hike-In?</Text>
+                        <Switch 
+                            style={styles.formItem}
+                            value={this.state.hikeIn}
+                            trackColor={{true: '#5637DD', false: null}} //gives color for if the switch value is true and false
+                            onValueChange={value => this.setState({hikeIn: value})}
+                        />
+                    </View>
+                    <View style={styles.formRow}>
+                        <Text style={styles.formLabel}>Date</Text>
+                        <Button 
+                            onPress={() =>
+                                this.setState({showCalendar: !this.state.showCalendar})
+                            }
+                            title={this.state.date.toLocaleDateString('en-US')}
+                            color='#5637DD'
+                            accessibilityLabel='Tap me to select a reservation date' //helps with screen readers
+                        />
+                    </View>
+                    {this.state.showCalendar && (
+                        <DateTimePicker 
+                            value={this.state.date}
+                            mode={'date'}
+                            display='default'
+                            onChange={(event, selectedDate) => {
+                                selectedDate && this.setState({date: selectedDate, showCalendar: false});
+                            }} //selected date is saved to the state
+                            style={styles.formItem}
+                        />
+                    )}
+                    <View style={styles.formRow}>
+                        <Button 
+                            onPress={() => Alert.alert(
+                                'Begin Search?',
+                                `Number of Campers: ${this.state.campers} \n\nHike-in? ${this.state.hikeIn} \n\nDate: ${this.state.date.toLocaleDateString('en-US')}`,
+                                    [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => this.resetForm(),
+                                            style: 'cancel'
+                                        },
+                                        {
+                                            text: 'OK',
+                                            onPress: () => this.resetForm()
+                                        },
+                                    ],
+                                    { cancelable: false }
+                                )
+                            }
+                            title='Search'
+                            color='#5637DD'
+                            accessibilityLabel='Tap me to search for available campsites to reserve'
+                        />
+                    </View>
+                </Animatable.View>
+
+
+                
+                {/* <Modal
                     animationType={'slide'} //animation type for when the modal appears on the screen
                     transparent={false} //makes the modal opaque 
                     visible={this.state.showModal} //follows whatever showModal is set to, if false, visibilty will be set to false, if true, visibility will be set to true
@@ -127,7 +153,9 @@ class Reservation extends Component {
                             title='Close'
                         />
                     </View>
-                </Modal>
+                </Modal> */}
+
+
             </ScrollView>
         );
     }

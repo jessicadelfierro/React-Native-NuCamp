@@ -31,6 +31,7 @@ function RenderCampsite(props) {
     //enables response to a gesture using the panresponder
     //dx = differential or distance of a gesture across the x axis
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
+    const recognizeComment = ({dx}) => (dx > 200) ? true : false;
 
     //pass an object as an argument that describes what kind of responder to create
     //onStartShouldSetPanResponder: will activate the panresponder to respond to gestures on the component that it's used on
@@ -62,8 +63,11 @@ function RenderCampsite(props) {
                     ],
                     { cancelable: false }
                 );
+            } else if (recognizeComment(gestureState)) {
+                props.onShowModal();
             }
             return true;
+
         }
     });
 
