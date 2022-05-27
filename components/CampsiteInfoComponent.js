@@ -25,6 +25,9 @@ function RenderCampsite(props) {
     //descructure campsite object
     const {campsite} = props;
 
+    //react ref (think of refs as similar to how you give an html element an id attribute so you can refer to it)
+    const view = React.createRef();
+
     //enables response to a gesture using the panresponder
     //dx = differential or distance of a gesture across the x axis
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
@@ -32,8 +35,13 @@ function RenderCampsite(props) {
     //pass an object as an argument that describes what kind of responder to create
     //onStartShouldSetPanResponder: will activate the panresponder to respond to gestures on the component that it's used on
     //onPanResponderEnd: parameters hold values that are automatically passed into this event handler (first parameter gets the value of a native event object; e stands for event) (will not be using the first paramenter, can't get to the second parameter without also taking the first), gestureState: holds important information about the gesture that just ended
+    //onPanResponderGrant: handler that is triggered when a gesture is first recognized
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+            view.current.rubberBand(1000)
+            .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
+        },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
             if (recognizeDrag(gestureState)) {
@@ -65,6 +73,7 @@ function RenderCampsite(props) {
                 animation='fadeInDown' 
                 duration={2000} 
                 delay={1000}
+                ref={view}
                 //connects panResponder to a component
                 //spread syntax to spread out the panResponder's panHandlers then recombine them into one object to pass in as props for this component
                 {...panResponder.panHandlers}
