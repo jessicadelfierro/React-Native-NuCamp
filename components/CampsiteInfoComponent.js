@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input, TextInput } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -24,10 +24,51 @@ const mapDispatchToProps = {
 function RenderCampsite(props) {
     //descructure campsite object
     const {campsite} = props;
-    
+
+    //enables response to a gesture using the panresponder
+    //dx = differential or distance of a gesture across the x axis
+    const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
+
+    //pass an object as an argument that describes what kind of responder to create
+    //onStartShouldSetPanResponder: will activate the panresponder to respond to gestures on the component that it's used on
+    //onPanResponderEnd: parameters hold values that are automatically passed into this event handler (first parameter gets the value of a native event object; e stands for event) (will not be using the first paramenter, can't get to the second parameter without also taking the first), gestureState: holds important information about the gesture that just ended
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderEnd: (e, gestureState) => {
+            console.log('pan responder end', gestureState);
+            if (recognizeDrag(gestureState)) {
+                Alert.alert(
+                    'Add Favorite',
+                    'Are you sure you wish to add ' + campsite.name + 'to favorite?',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                            onPress: () => console.log('Cancel Pressed')
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ?
+                                console.log('Already set as favorite') : props.markFavorite()
+                        }
+                    ],
+                    { cancelable: false }
+                );
+            }
+            return true;
+        }
+    });
+
     if (campsite) {
         return (
-            <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+            <Animatable.View 
+                animation='fadeInDown' 
+                duration={2000} 
+                delay={1000}
+                //connects panResponder to a component
+                //spread syntax to spread out the panResponder's panHandlers then recombine them into one object to pass in as props for this component
+                {...panResponder.panHandlers}
+                >
                 <Card
                     featuredTitle={campsite.name}
                     image={{uri: baseUrl + campsite.image}}>
