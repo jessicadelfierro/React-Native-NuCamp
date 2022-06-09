@@ -6,6 +6,7 @@ import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoritesComponent';
+import Login from './LoginComponent';
 import Constants from 'expo-constants';
 import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -180,6 +181,29 @@ const FavoritesNavigator = createStackNavigator(
     }
 );
 
+//stack navigator for Login 
+const LoginNavigator = createStackNavigator(
+    {
+        Login: { screen: Login }
+    },
+    {
+        defaultNavigationOptions: ({navigation}) => ({
+            headerStyle: {
+                backgroundColor: '#5637DD'
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                color: '#fff'
+            },
+            headerLeft: <Icon 
+                name='sign-in'
+                type='font-awesome'
+                iconStyle={styles.stackIcon}
+                onPress={() => navigation.toggleDrawer()}
+            />
+        })  
+    }
+);
 
 //this function will recieve props as it's parameter and return the view of our customized drawer
 //SafeAreaView is specifically for iPhone X; defines part of the area as a safe area where nothing else will be laid out to account for the specific physical layout of the iPhone X with the rounded corners and the camera notch
@@ -211,6 +235,19 @@ const CustomDrawerContentComponent = props => (
 //want to route them to the stack navigator 
 const MainNavigator = createDrawerNavigator(
     {
+        Login: { 
+            screen: LoginNavigator,
+            navigationOptions: {
+                drawerIcon: ({tintColor}) => (
+                    <Icon 
+                        name='sign-in'
+                        type='font-awesome'
+                        size={24}
+                        color={tintColor}
+                    />
+                )
+            }
+        },
         Home: { 
             screen: HomeNavigator,
             navigationOptions: {
@@ -297,6 +334,8 @@ const MainNavigator = createDrawerNavigator(
         }
     },
     {
+        //makes home the initial first page when loading the app instead of using the first in the list (login)
+        initialRouteName: 'Home',
         drawerBackgroundColor: '#CEC8FF',
         //connects CustomDrawerContentComponent with the drawer navigator/main navigator
         //tells main navigator to use CustomDrawerContentComponent to render the content of the side drawer
